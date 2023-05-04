@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/jmoiron/sqlx"
+	"database/sql"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	"github.com/mBuergi86/deaftube/handlers"
@@ -12,7 +12,7 @@ import (
 
 func Router(app *echo.Echo) {
 	connStr := utility.ConnectString()
-	db, err := sqlx.Open("postgres", connStr)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

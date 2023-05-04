@@ -4,9 +4,8 @@ select * from users order by firstname;
 -- name: GetUserID :one
 select * from users where id = $1 limit 1;
 
--- name: CreateUser :oone
+-- name: CreateUser :exec
 insert into users (
-                   id,
                    firstname,
                    lastname,
                    username,
@@ -14,7 +13,7 @@ insert into users (
                    channel_name,
                    password,
                    created_at,
-                   update_at) values ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
+                   update_at) values ( $1, $2, $3, $4, $5, $6, now(), now())
 returning *;
 
 -- name: UpdateUser :exec
