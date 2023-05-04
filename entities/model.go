@@ -13,15 +13,15 @@ const (
 )
 
 type SUsers struct {
-	UUID       uuid.UUID `db:"uuid"`
-	Firstname  string    `db:"firstname"`
-	Lastname   string    `db:"lastname"`
-	Username   string    `db:"username"`
-	Email      string    `db:"email"`
-	KannelName string    `db:"kannel_name"`
-	Password   string    `db:"password"`
-	PhotoUrl   string    `db:"photo_url"`
-	Role       Role      `db:"role"`
-	CreatedAt  time.Time `db:"created_at"`
-	UpdateAt   time.Time `db:"update_at"`
+	ID          uuid.UUID `db:"id"`
+	Firstname   string    `db:"firstname"`
+	Lastname    string    `db:"lastname"`
+	Username    string    `db:"username"`
+	Email       string    `db:"email"`
+	ChannelName string    `db:"channel_name"`
+	Password    string    `db:"password"`
+	PhotoUrl    string    `db:"photo_url"`
+	Role        Role      `db:"role"`
+	CreatedAt   time.Time `db:"created_at"`
+	UpdateAt    time.Time `db:"update_at"`
 }

@@ -96,10 +96,10 @@ func DeleteUser(r repository.UserRepository) echo.HandlerFunc {
 		if err != nil {
 			return utility.HandlerBadRequest(err)(c)
 		}
-		data, err := r.GetUserID(id)
+		err = r.DeleteUser(id)
 		if err != nil {
 			return utility.HandlerError(err)(c)
 		}
-		return c.JSON(http.StatusOK, data)
+		return c.JSON(http.StatusOK, "Successful")
 	}
 }
