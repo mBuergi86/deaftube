@@ -3,7 +3,9 @@ package repository
 import (
 	"database/sql"
 	"github.com/google/uuid"
+	"github.com/mBuergi86/deaftube/database"
 	"github.com/mBuergi86/deaftube/entities"
+	"log"
 )
 
 type UserRepository interface {
@@ -20,19 +22,33 @@ type UserRepo struct {
 }
 
 func NewUserRepository(db *sql.DB) *UserRepo {
-	return &UserRepo{db: db}
+	return &UserRepo{db: database.NewDBConnection()}
 }
 
 const getUsers = `-- name: GetUsers :many
-select * from users order by firstname;`
+select firstname, lastname, username, role from users order by firstname;`
 
 func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
-	row := u.db.QueryRow(getUsers)
+	rows, err := u.db.Query(getUsers)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
 
 	var users []entities.SUsers
-	err := row.Scan(&users)
-	if err != nil {
-		return nil, err
+
+	for rows.Next() {
+		var user entities.SUsers
+		err := rows.Scan(
+			&user.Firstname,
+			&user.Lastname,
+			&user.Username,
+			&user.Role,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
 	}
 	return users, nil
 }
@@ -58,12 +74,13 @@ insert into users (
                    email,
                    channel_name,
                    password,
+                   role,
                    created_at,
-                   update_at) values ( $1, $2, $3, $4, $5, $6, now(), now())
+                   update_at) values ( $1, $2, $3, $4, $5, $6, $7, now(), now())
 returning *;`
 
 func (u *UserRepo) CreateUser(arg entities.SUsers) error {
-	_, err := u.db.Exec(createUser, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password)
+	_, err := u.db.Exec(createUser, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password, arg.Role)
 	if err != nil {
 		return err
 	}

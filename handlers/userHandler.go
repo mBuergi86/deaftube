@@ -47,13 +47,19 @@ func CreateUser(r repository.UserRepository) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		u := new(entities.SUsers)
 		if err := c.BodyParser(u); err != nil {
-			return err
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid request playload",
+				"error":   err.Error(),
+			})
 		}
 		err := r.CreateUser(*u)
 		if err != nil {
 			return utility.HandlerError(err)(c)
 		}
-		return c.Status(fiber.StatusOK).JSON("Successful")
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "User created successfully",
+			"data":    u,
+		})
 	}
 }
 

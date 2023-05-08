@@ -12,7 +12,6 @@ func main() {
 	app := fiber.New()
 
 	router.Router(app)
-
 	middleware.Middleware(app)
 
 	httpPort := os.Getenv("PORT")
