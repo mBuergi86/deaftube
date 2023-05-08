@@ -2,8 +2,9 @@ package database
 
 import (
 	"database/sql"
-	"github.com/mBuergi86/deaftube/utility"
 	"log"
+
+	"github.com/mBuergi86/deaftube/utility"
 )
 
 var (
@@ -12,17 +13,18 @@ var (
 )
 
 func NewDBConnection() *sql.DB {
-	//
+	// get a database connection
 	db, err := sql.Open(dbDriver, connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//
+	// check a database connection
 	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// a database connection is ready
 	return db
 }

@@ -1,18 +1,20 @@
 package handlers
 
 import (
+	"sync"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/mBuergi86/deaftube/entities"
 	"github.com/mBuergi86/deaftube/repository"
 	"github.com/mBuergi86/deaftube/utility"
-	"sync"
 )
 
 var (
 	lock sync.Mutex
 )
 
+// the users will be completely from database
 func GetUsers(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -25,6 +27,7 @@ func GetUsers(r repository.UserRepository) fiber.Handler {
 	}
 }
 
+// an user is verified with an ID from database
 func GetUserByID(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -41,6 +44,7 @@ func GetUserByID(r repository.UserRepository) fiber.Handler {
 	}
 }
 
+// an new user will be recorded in the database
 func CreateUser(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -63,6 +67,7 @@ func CreateUser(r repository.UserRepository) fiber.Handler {
 	}
 }
 
+// an modified user will be changed in the database
 func UpdateUser(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -83,6 +88,7 @@ func UpdateUser(r repository.UserRepository) fiber.Handler {
 	}
 }
 
+// an user will be deleted in the database
 func DeleteUser(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
