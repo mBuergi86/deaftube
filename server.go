@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 	"github.com/mBuergi86/deaftube/middleware"
 	"github.com/mBuergi86/deaftube/router"
+	"log"
 	"os"
 )
 
 func main() {
-	app := echo.New()
+	app := fiber.New()
 
 	router.Router(app)
 
@@ -20,5 +21,5 @@ func main() {
 		httpPort = "8080"
 	}
 
-	app.Logger.Fatal(app.Start(":" + httpPort))
+	log.Fatal(app.Listen(":" + httpPort))
 }

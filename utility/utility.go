@@ -1,26 +1,25 @@
 package utility
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
 	"log"
-	"net/http"
 	"os"
 )
 
-func HandlerError(err error) echo.HandlerFunc {
-	return func(c echo.Context) error {
+func HandlerError(err error) fiber.Handler {
+	return func(c *fiber.Ctx) error {
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 		}
 		return nil
 	}
 }
 
-func HandlerBadRequest(err error) echo.HandlerFunc {
-	return func(c echo.Context) error {
+func HandlerBadRequest(err error) fiber.Handler {
+	return func(c *fiber.Ctx) error {
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 		}
 		return nil
 	}

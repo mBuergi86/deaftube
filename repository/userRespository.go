@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"context"
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/mBuergi86/deaftube/entities"
@@ -28,8 +27,8 @@ const getUsers = `-- name: GetUsers :many
 select * from users order by firstname;`
 
 func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
-	ctx := context.TODO()
-	row := u.db.QueryRowContext(ctx, getUsers)
+	row := u.db.QueryRow(getUsers)
+
 	var users []entities.SUsers
 	err := row.Scan(&users)
 	if err != nil {
@@ -42,8 +41,7 @@ const getUser = `-- name: GetUserID :one
 select * from users where id = $1 limit 1;`
 
 func (u *UserRepo) GetUserID(id uuid.UUID) (entities.SUsers, error) {
-	ctx := context.TODO()
-	row := u.db.QueryRowContext(ctx, getUser, id)
+	row := u.db.QueryRow(getUser, id)
 	var users entities.SUsers
 	err := row.Scan(&users)
 	if err != nil {
@@ -65,8 +63,7 @@ insert into users (
 returning *;`
 
 func (u *UserRepo) CreateUser(arg entities.SUsers) error {
-	ctx := context.TODO()
-	_, err := u.db.ExecContext(ctx, createUser, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password)
+	_, err := u.db.Exec(createUser, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password)
 	if err != nil {
 		return err
 	}
@@ -85,8 +82,7 @@ update users set
 where id = $1;`
 
 func (u *UserRepo) UpdateUser(id uuid.UUID, arg entities.SUsers) error {
-	ctx := context.TODO()
-	_, err := u.db.ExecContext(ctx, updateUser, id, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password)
+	_, err := u.db.Exec(updateUser, id, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password)
 	if err != nil {
 		return err
 	}
@@ -97,8 +93,7 @@ const deleteUser = `-- name: DeleteUser :exec
 delete from users where id = $1;`
 
 func (u *UserRepo) DeleteUser(id uuid.UUID) error {
-	ctx := context.TODO()
-	_, err := u.db.ExecContext(ctx, deleteUser, id)
+	_, err := u.db.Exec(deleteUser, id)
 	if err != nil {
 		return err
 	}

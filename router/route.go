@@ -2,7 +2,7 @@ package router
 
 import (
 	"database/sql"
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 	"github.com/mBuergi86/deaftube/handlers"
 	"github.com/mBuergi86/deaftube/repository"
@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func Router(app *echo.Echo) {
+func Router(app *fiber.App) {
 	connStr := utility.ConnectString()
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -27,9 +27,9 @@ func Router(app *echo.Echo) {
 		log.Fatal(err)
 	}
 
-	app.GET("/", handlers.GetUsers(repo))
-	app.GET("/:id", handlers.GetUserByID(repo))
-	app.POST("/", handlers.CreateUser(repo))
-	app.PUT("/:id", handlers.UpdateUser(repo))
-	app.DELETE("/:id", handlers.DeleteUser(repo))
+	app.Get("/", handlers.GetUsers(repo))
+	app.Get("/:id", handlers.GetUserByID(repo))
+	app.Post("/", handlers.CreateUser(repo))
+	app.Put("/:id", handlers.UpdateUser(repo))
+	app.Delete("/:id", handlers.DeleteUser(repo))
 }

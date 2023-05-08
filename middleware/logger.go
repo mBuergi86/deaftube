@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/labstack/echo/v4"
-	middleware2 "github.com/labstack/echo/v4/middleware"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func Middleware(app *echo.Echo) {
-	app.Use(middleware2.Logger())
-	app.Use(middleware2.Recover())
+func Middleware(app *fiber.App) {
+	app.Use(logger.New())
+	app.Use(recover.New())
 }
