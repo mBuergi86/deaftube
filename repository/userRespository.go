@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/mBuergi86/deaftube/database"
 	"github.com/mBuergi86/deaftube/entities"
@@ -12,7 +13,7 @@ type UserRepository interface {
 	GetUsers() ([]entities.SUsers, error)
 	GetUserID(id uuid.UUID) (entities.SUsers, error)
 	CreateUser(user entities.SUsers) error
-	UpdateUser(id uuid.UUID, user entities.SUsers) error
+	UpdateUser(id uuid.UUID, user []entities.SUsers) error
 	DeleteUser(id uuid.UUID) error
 }
 
@@ -26,7 +27,7 @@ func NewUserRepository(db *sql.DB) *UserRepo {
 }
 
 const getUsers = `-- name: GetUsers :many
-select firstname, lastname, username, role from users order by firstname;`
+select firstname, lastname, username, channel_name, role, created_at, update_at from users order by firstname;`
 
 func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
 	rows, err := u.db.Query(getUsers)
@@ -39,31 +40,36 @@ func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
 
 	for rows.Next() {
 		var user entities.SUsers
+
 		err := rows.Scan(
-			&user.Firstname,
-			&user.Lastname,
-			&user.Username,
-			&user.Role,
+			&user.Firstname, &user.Lastname, &user.Username, &user.ChannelName, &user.Role, &user.CreatedAt, &user.UpdateAt,
 		)
 		if err != nil {
 			return nil, err
 		}
 		users = append(users, user)
+
 	}
 	return users, nil
 }
 
 const getUser = `-- name: GetUserID :one
-select * from users where id = $1 limit 1;`
+select firstname, lastname, username, role from users where id = $1;`
 
 func (u *UserRepo) GetUserID(id uuid.UUID) (entities.SUsers, error) {
 	row := u.db.QueryRow(getUser, id)
-	var users entities.SUsers
-	err := row.Scan(&users)
+
+	var user entities.SUsers
+	err := row.Scan(
+		&user.Firstname, &user.Lastname, &user.Username, &user.Role,
+	)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return entities.SUsers{}, errors.New("user not found")
+		}
 		return entities.SUsers{}, err
 	}
-	return users, nil
+	return user, nil
 }
 
 const createUser = `-- name: CreateUser :exec
@@ -95,11 +101,13 @@ update users set
     email = coalesce($5, email),
     channel_name = coalesce($6, channel_name),
     password = coalesce($7, password),
+    photo_url = coalesce($8, photo_url),
+    role = coalesce($9, role),
     update_at = now()
 where id = $1;`
 
-func (u *UserRepo) UpdateUser(id uuid.UUID, arg entities.SUsers) error {
-	_, err := u.db.Exec(updateUser, id, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password)
+func (u *UserRepo) UpdateUser(id uuid.UUID, user []entities.SUsers) error {
+	_, err := u.db.Exec(updateUser, id, user)
 	if err != nil {
 		return err
 	}

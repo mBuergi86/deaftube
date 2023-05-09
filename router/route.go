@@ -12,9 +12,9 @@ func Router(app *fiber.App) {
 	db := database.NewDBConnection()
 	repo := repository.NewUserRepository(db)
 
-	app.Get("/", handlers.GetUsers(repo))
-	app.Get("/:id", handlers.GetUserByID(repo))
-	app.Post("/", handlers.CreateUser(repo))
-	app.Put("/:id", handlers.UpdateUser(repo))
-	app.Delete("/:id", handlers.DeleteUser(repo))
+	app.Get("/user", handlers.GetUsers(repo))
+	app.Get("/user/:id", handlers.GetUserByID(repo))
+	app.Post("/user", handlers.CreateUser(repo))
+	app.Patch("/user/:id", handlers.UpdateUser(repo))
+	app.Delete("/user/:id", handlers.DeleteUser(repo))
 }
