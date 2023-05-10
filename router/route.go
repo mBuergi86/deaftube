@@ -9,8 +9,8 @@ import (
 )
 
 func Router(app *fiber.App) {
-	db := database.NewDBConnection()
-	repo := repository.NewUserRepository(db)
+	database.NewDBConnection()
+	repo := repository.NewUserRepository()
 
 	app.Get("/user", handlers.GetUsers(repo))
 	app.Get("/user/:id", handlers.GetUserByID(repo))

@@ -4,6 +4,7 @@
     <data-source source="LOCAL" name="postgres@localhost" uuid="ecad7c77-e47f-4505-b85f-c0613014923a">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
+      <isolation>8</isolation>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5433/deaftube</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>

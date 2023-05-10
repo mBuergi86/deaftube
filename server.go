@@ -10,9 +10,8 @@ import (
 
 func main() {
 	app := fiber.New()
-
-	router.Router(app)
 	middleware.Middleware(app)
+	router.Router(app)
 
 	httpPort := os.Getenv("PORT")
 

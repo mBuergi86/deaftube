@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	_ "github.com/lib/pq"
 	"github.com/mBuergi86/deaftube/utility"
 )
 

@@ -26,7 +26,7 @@ func GetUsers(r repository.UserRepository) fiber.Handler {
 	}
 }
 
-// GetUserByID an user is verified with an ID from database
+// GetUserByID a user is verified with an ID from database
 func GetUserByID(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -43,7 +43,7 @@ func GetUserByID(r repository.UserRepository) fiber.Handler {
 	}
 }
 
-// CreateUser an new user will be recorded in the database
+// CreateUser a new user will be recorded in the database
 func CreateUser(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -51,7 +51,7 @@ func CreateUser(r repository.UserRepository) fiber.Handler {
 		u := new(entities.SUsers)
 		if err := c.BodyParser(u); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "Invalid request playload",
+				"message": "Invalid request load",
 				"error":   err.Error(),
 			})
 		}
@@ -66,7 +66,6 @@ func CreateUser(r repository.UserRepository) fiber.Handler {
 	}
 }
 
-// UpdateUser an modified user will be changed in the database
 func UpdateUser(r repository.UserRepository) fiber.Handler {
 	lock.Lock()
 	defer lock.Unlock()
@@ -75,46 +74,21 @@ func UpdateUser(r repository.UserRepository) fiber.Handler {
 		if err != nil {
 			return utility.HandlerBadRequest(err)(c)
 		}
+
 		update := new(entities.SUsers)
+
 		if err := c.BodyParser(update); err != nil {
-			return utility.HandlerBadRequest(err)(c)
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid request load",
+				"error":   err.Error(),
+			})
 		}
 
-		var users []entities.SUsers
-		user := entities.SUsers{}
-
-		if update.Firstname != " " {
-			user = entities.SUsers{Firstname: update.Firstname}
-		}
-		if update.Lastname != " " {
-			user = entities.SUsers{Lastname: update.Lastname}
-		}
-		if update.Username != "" {
-			user.Username = update.Username
-		}
-		if update.Email != "" {
-			user.Email = update.Email
-		}
-		if update.ChannelName != "" {
-			user.ChannelName = update.ChannelName
-		}
-		if update.Password != "" {
-			user.Password = update.Password
-		}
-		if update.PhotoUrl != "" {
-			user.PhotoUrl = update.PhotoUrl
-		}
-		if update.Role != "" {
-			user.Role = update.Role
-		}
-
-		users = append(users, user)
-
-		err = r.UpdateUser(id, users)
+		err = r.UpdateUser(id, *update)
 		if err != nil {
 			return utility.HandlerError(err)(c)
 		}
-		return c.Status(fiber.StatusOK).JSON("Successful")
+		return c.Status(fiber.StatusOK).JSON("Update will be successful")
 	}
 }
 
@@ -131,6 +105,6 @@ func DeleteUser(r repository.UserRepository) fiber.Handler {
 		if err != nil {
 			return utility.HandlerError(err)(c)
 		}
-		return c.Status(fiber.StatusOK).JSON("Successful")
+		return c.Status(fiber.StatusOK).JSON("Delete will be successful")
 	}
 }

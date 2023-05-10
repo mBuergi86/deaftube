@@ -13,7 +13,7 @@ type UserRepository interface {
 	GetUsers() ([]entities.SUsers, error)
 	GetUserID(id uuid.UUID) (entities.SUsers, error)
 	CreateUser(user entities.SUsers) error
-	UpdateUser(id uuid.UUID, user []entities.SUsers) error
+	UpdateUser(id uuid.UUID, user entities.SUsers) error
 	DeleteUser(id uuid.UUID) error
 }
 
@@ -22,7 +22,7 @@ type UserRepo struct {
 	entities.SUsers
 }
 
-func NewUserRepository(db *sql.DB) *UserRepo {
+func NewUserRepository() *UserRepo {
 	return &UserRepo{db: database.NewDBConnection()}
 }
 
@@ -34,7 +34,12 @@ func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			return
+		}
+	}(rows)
 
 	var users []entities.SUsers
 
@@ -54,14 +59,14 @@ func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
 }
 
 const getUser = `-- name: GetUserID :one
-select firstname, lastname, username, role from users where id = $1;`
+select firstname, lastname, username, role, channel_name, created_at, update_at from users where id = $1;`
 
 func (u *UserRepo) GetUserID(id uuid.UUID) (entities.SUsers, error) {
 	row := u.db.QueryRow(getUser, id)
 
 	var user entities.SUsers
 	err := row.Scan(
-		&user.Firstname, &user.Lastname, &user.Username, &user.Role,
+		&user.Firstname, &user.Lastname, &user.Username, &user.Role, &user.ChannelName, &user.CreatedAt, &user.UpdateAt,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -86,11 +91,17 @@ insert into users (
 returning *;`
 
 func (u *UserRepo) CreateUser(arg entities.SUsers) error {
-	_, err := u.db.Exec(createUser, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password, arg.Role)
+	result, err := u.db.Exec(createUser, arg.Firstname, arg.Lastname, arg.Username, arg.Email, arg.ChannelName, arg.Password, arg.Role)
 	if err != nil {
 		return err
 	}
-	return nil
+	rowsAffected, err := result.RowsAffected()
+	if err == nil {
+		if rowsAffected != 0 {
+			return nil
+		}
+	}
+	return err
 }
 
 const updateUser = `-- name: UpdateUser :exec
@@ -101,16 +112,26 @@ update users set
     email = coalesce($5, email),
     channel_name = coalesce($6, channel_name),
     password = coalesce($7, password),
-    photo_url = coalesce($8, photo_url),
-    role = coalesce($9, role),
+    role = coalesce($8, role),
+    photo_url = coalesce($9, photo_url),
     update_at = now()
-where id = $1;`
+where id = $1;
+`
 
-func (u *UserRepo) UpdateUser(id uuid.UUID, user []entities.SUsers) error {
-	_, err := u.db.Exec(updateUser, id, user)
+func (u *UserRepo) UpdateUser(id uuid.UUID, user entities.SUsers) error {
+	values := []interface{}{user.Firstname, user.Lastname, user.Username, user.Email, user.ChannelName, user.Password, user.Role, user.PhotoUrl}
+
+	for i, v := range values {
+		if v == "" {
+			values[i] = nil
+		}
+	}
+
+	_, err := u.db.Exec(updateUser, id, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7])
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
