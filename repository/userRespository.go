@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"github.com/mBuergi86/deaftube/database"
 	"github.com/mBuergi86/deaftube/entities"
 	"log"
+	"os"
 )
 
 type UserRepository interface {
@@ -26,10 +28,19 @@ func NewUserRepository() *UserRepo {
 	return &UserRepo{db: database.NewDBConnection()}
 }
 
-const getUsers = `-- name: GetUsers :many
-select firstname, lastname, username, channel_name, role, created_at, update_at from users order by firstname;`
+/* const getUsers = `-- name: GetUsers :many
+select firstname, lastname, username, channel_name, role, created_at, update_at from users order by firstname;`*/
+
+var (
+	err      = godotenv.Load("database.env")
+	getUsers = os.Getenv("GETUsers")
+)
 
 func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
+	if err != nil {
+		log.Fatal("Error loading from database.env file:", err)
+	}
+
 	rows, err := u.db.Query(getUsers)
 	if err != nil {
 		log.Fatal(err)

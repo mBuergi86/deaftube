@@ -13,6 +13,7 @@ var (
 	connStr  = utility.ConnectString()
 )
 
+// NewDBConnection Connect to Database
 func NewDBConnection() *sql.DB {
 	// get a database connection
 	db, err := sql.Open(dbDriver, connStr)

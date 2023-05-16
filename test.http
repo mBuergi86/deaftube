@@ -1,0 +1,34 @@
+DELETE http://localhost:8080/user/id
+Content-Type: application/json
+
+###
+PATCH http://localhost:8080/user/fc2c0bbd-684d-4943-94e3-30af30871664
+Content-Type: application/json
+
+{
+  "ChannelName": "Don't know"
+}
+
+###
+POST localhost:8080/user
+Content-Type: application/json
+
+{
+  "Firstname": "Aaron",
+  "Lastname": "Hasler",
+  "Username": "ahasler",
+  "ChannelName": "Student",
+  "Password": "",
+  "Email": "a.hasler@example.com",
+  "Role": "user"
+}
+
+###
+GET http://localhost:8080/user/fc2c0bbd-684d-4943-94e3-30af30871664
+Accept: application/json
+
+###
+GET http://localhost:8080/user
+Accept: application/json
+
+###
