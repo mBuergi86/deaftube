@@ -6,7 +6,7 @@ PATCH http://localhost:8080/user/fc2c0bbd-684d-4943-94e3-30af30871664
 Content-Type: application/json
 
 {
-  "ChannelName": "Don't know"
+  "Role": "admin"
 }
 
 ###

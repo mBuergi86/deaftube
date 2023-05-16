@@ -58,7 +58,7 @@ func (u *UserRepo) GetUsers() ([]entities.SUsers, error) {
 		var user entities.SUsers
 
 		err := rows.Scan(
-			&user.Firstname, &user.Lastname, &user.Username, &user.ChannelName, &user.Role, &user.CreatedAt, &user.UpdateAt,
+			&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.Email, &user.ChannelName, &user.Role, &user.CreatedAt, &user.UpdateAt,
 		)
 		if err != nil {
 			return nil, err
