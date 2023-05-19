@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="postgres@localhost" uuid="ecad7c77-e47f-4505-b85f-c0613014923a">
+    <data-source source="LOCAL" name="postgres@localhost [2]" uuid="75a0d415-ce58-4800-89e2-4b042a1d3aa7">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <isolation>8</isolation>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5433/deaftube</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:32768/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
